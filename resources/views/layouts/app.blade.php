@@ -93,6 +93,108 @@
                                 </svg>
                                 <span>Panel Pemilik</span>
                             </a>
+
+                            <!-- Notification Bell Dropdown -->
+                            <div class="relative" x-data="{ notifOpen: false }" @click.outside="notifOpen = false">
+                                <button @click="notifOpen = !notifOpen" type="button" class="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors focus:outline-none" aria-label="Notifikasi">
+                                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                    </svg>
+                                    @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                        <span class="absolute top-1 right-1 flex h-4 w-4">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                            <span class="relative inline-flex items-center justify-center rounded-full h-4 w-4 bg-rose-600 text-[10px] font-bold text-white leading-none">
+                                                {{ $navbarUnreadNotificationsCount > 9 ? '9+' : $navbarUnreadNotificationsCount }}
+                                            </span>
+                                        </span>
+                                    @endif
+                                </button>
+
+                                <!-- Dropdown Panel -->
+                                <div x-show="notifOpen" x-cloak 
+                                     x-transition:enter="transition ease-out duration-150" 
+                                     x-transition:enter-start="transform opacity-0 scale-95" 
+                                     x-transition:enter-end="transform opacity-100 scale-100" 
+                                     x-transition:leave="transition ease-in duration-100" 
+                                     x-transition:leave-start="transform opacity-100 scale-100" 
+                                     x-transition:leave-end="transform opacity-0 scale-95" 
+                                     class="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 divide-y divide-slate-100 py-1 z-50">
+                                    
+                                    <!-- Header -->
+                                    <div class="px-4 py-3 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm font-bold text-slate-900">Notifikasi Booking</span>
+                                            @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    {{ $navbarUnreadNotificationsCount }} baru
+                                                </span>
+                                            @endif
+                                        </div>
+                                        @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                            <form action="{{ route('owner.notifications.read-all') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="text-xs text-brand-600 hover:text-brand-700 font-semibold hover:underline">
+                                                    Tandai dibaca
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+
+                                    <!-- Recent Notifications List -->
+                                    <div class="max-h-80 overflow-y-auto divide-y divide-slate-50">
+                                        @forelse($navbarRecentNotifications ?? [] as $navNotif)
+                                            @php
+                                                $nData = $navNotif->data;
+                                                $isNavUnread = is_null($navNotif->read_at);
+                                                $nType = $nData['property_type'] ?? 'rumah';
+                                                $typeBadgeClass = match($nType) {
+                                                    'rumah' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                    'kost' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                    'petakan' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                    'paviliun' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                                    default => 'bg-slate-100 text-slate-700 border-slate-200',
+                                                };
+                                            @endphp
+                                            <a href="{{ route('owner.notifications.read-redirect', $navNotif->id) }}" class="block px-4 py-3 hover:bg-slate-50 transition-colors {{ $isNavUnread ? 'bg-brand-50/40' : '' }}">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-center gap-1.5 mb-1">
+                                                            <span class="inline-block px-1.5 py-0.2 rounded text-[10px] font-bold border {{ $typeBadgeClass }}">
+                                                                {{ $nData['property_type_label'] ?? 'Kontrakan' }}
+                                                            </span>
+                                                            @if($isNavUnread)
+                                                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                                            @endif
+                                                            <span class="text-[10px] text-slate-600 ml-auto">{{ $navNotif->created_at->diffForHumans() }}</span>
+                                                        </div>
+                                                        <p class="text-xs font-semibold text-slate-900 truncate">
+                                                            {{ $nData['property_title'] ?? 'Kontrakan' }}
+                                                        </p>
+                                                        <p class="text-[11px] text-slate-600 truncate mt-0.5">
+                                                            {{ $nData['tenant_name'] ?? 'Penyewa' }} &bull; {{ $nData['formatted_grand_total'] ?? '' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="px-4 py-8 text-center text-xs text-slate-600">
+                                                <svg class="w-8 h-8 text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                                                Belum ada notifikasi pesanan baru.
+                                            </div>
+                                        @endforelse
+                                    </div>
+
+                                    <!-- Footer Link -->
+                                    <div class="p-2 text-center bg-slate-50/70">
+                                        <a href="{{ route('owner.notifications.index') }}" class="block py-1.5 text-xs font-bold text-brand-700 hover:text-brand-800 transition-colors">
+                                            Buka Pusat Notifikasi &rarr;
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         @else
                             <a href="{{ route('bookings.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,6 +237,17 @@
                                         <a href="{{ route('owner.bookings.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
                                             <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                             Permohonan Booking
+                                        </a>
+                                        <a href="{{ route('owner.notifications.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                                <span>Pusat Notifikasi</span>
+                                            </div>
+                                            @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white leading-none">
+                                                    {{ $navbarUnreadNotificationsCount }}
+                                                </span>
+                                            @endif
                                         </a>
                                     @else
                                         <a href="{{ route('bookings.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
@@ -215,6 +328,14 @@
                             </a>
                             <a href="{{ route('owner.bookings.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
                                 Permohonan Booking
+                            </a>
+                            <a href="{{ route('owner.notifications.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <span>Pusat Notifikasi</span>
+                                @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500 text-white">
+                                        {{ $navbarUnreadNotificationsCount }} Baru
+                                    </span>
+                                @endif
                             </a>
                         @else
                             <a href="{{ route('bookings.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">

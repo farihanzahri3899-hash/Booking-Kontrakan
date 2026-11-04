@@ -10,10 +10,10 @@ $storageDirs = [
 ];
 
 foreach ($storageDirs as $dir) {
-    if (!is_dir($dir)) {
+    if (! is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
 }
 
 // Teruskan permintaan Vercel ke entry point publik Laravel
-require __DIR__ . '/../public/index.php';
+require __DIR__.'/../public/index.php';

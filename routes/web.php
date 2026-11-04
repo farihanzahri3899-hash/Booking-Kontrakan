@@ -5,6 +5,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Owner\BookingManageController;
 use App\Http\Controllers\Owner\DashboardController;
+use App\Http\Controllers\Owner\NotificationController;
 use App\Http\Controllers\Owner\PropertyManageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -60,4 +61,11 @@ Route::middleware(['auth', 'owner'])->prefix('pemilik')->name('owner.')->group(f
     Route::post('/permohonan-booking/{booking}/verifikasi-bayar', [BookingManageController::class, 'verifyPayment'])->name('bookings.verify-payment');
     Route::post('/permohonan-booking/{booking}/tolak', [BookingManageController::class, 'reject'])->name('bookings.reject');
     Route::post('/permohonan-booking/{booking}/selesaikan', [BookingManageController::class, 'complete'])->name('bookings.complete');
+
+    // Notifications Management
+    Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifikasi/{id}/baca', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read-redirect');
+    Route::post('/notifikasi/{id}/baca', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::delete('/notifikasi/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 });

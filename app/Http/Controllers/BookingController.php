@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Property;
+use App\Notifications\NewBookingNotification;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -112,6 +113,13 @@ class BookingController extends Controller
             'payment_status' => 'unpaid',
             'notes' => $validated['notes'] ?? null,
         ]);
+
+        // Kirim notifikasi pesanan baru ke pemilik kontrakan
+        $booking->load('property.user');
+        $owner = $property->user;
+        if ($owner) {
+            $owner->notify(new NewBookingNotification($booking));
+        }
 
         return redirect()->route('bookings.show', $booking->booking_code)
             ->with('success', 'Permohonan booking berhasil dibuat! Silakan selesaikan pembayaran untuk verifikasi.');

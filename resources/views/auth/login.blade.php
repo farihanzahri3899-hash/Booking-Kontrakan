@@ -19,12 +19,15 @@
         <!-- Demo Accounts Quick Fill Buttons -->
         <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200/80 space-y-2">
             <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 block">Akun Demo Pengujian Cepat:</span>
-            <div class="grid grid-cols-2 gap-2">
-                <a href="{{ route('quick-login', 'pemilik') }}" class="px-3 py-2 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 text-center transition-colors shadow-2xs">
-                    Masuk sbg Pemilik
+            <div class="grid grid-cols-3 gap-2">
+                <a href="{{ route('quick-login', 'admin') }}" class="px-2 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-[11px] font-bold text-indigo-900 text-center transition-colors shadow-2xs">
+                    Admin
                 </a>
-                <a href="{{ route('quick-login', 'penyewa') }}" class="px-3 py-2 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 text-center transition-colors shadow-2xs">
-                    Masuk sbg Penyewa
+                <a href="{{ route('quick-login', 'pemilik') }}" class="px-2 py-2 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-[11px] font-bold text-amber-900 text-center transition-colors shadow-2xs">
+                    Pemilik
+                </a>
+                <a href="{{ route('quick-login', 'penyewa') }}" class="px-2 py-2 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-[11px] font-bold text-amber-900 text-center transition-colors shadow-2xs">
+                    Penyewa
                 </a>
             </div>
         </div>

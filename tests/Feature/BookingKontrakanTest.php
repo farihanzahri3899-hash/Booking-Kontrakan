@@ -52,6 +52,10 @@ class BookingKontrakanTest extends TestCase
         $ownerResponse = $this->get(route('quick-login', 'pemilik'));
         $ownerResponse->assertRedirect(route('owner.dashboard'));
         $this->assertAuthenticated();
+
+        $adminResponse = $this->get(route('quick-login', 'admin'));
+        $adminResponse->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticated();
     }
 
     public function test_tenant_can_submit_booking(): void

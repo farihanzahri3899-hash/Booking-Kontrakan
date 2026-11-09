@@ -13,11 +13,23 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin / Pemilik Properti
+        // Super Administrator
         User::firstOrCreate(
             ['email' => 'admin@kontrakan.test'],
             [
-                'name' => 'H. Bambang Sudarmo',
+                'name' => 'Super Administrator',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'phone' => '081200000001',
+                'avatar' => 'https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff',
+            ]
+        );
+
+        // Pemilik Properti Utama
+        User::firstOrCreate(
+            ['email' => 'pemilik@kontrakan.test'],
+            [
+                'name' => 'H. Bambang Sudarmo (Pemilik)',
                 'password' => Hash::make('password'),
                 'role' => 'pemilik',
                 'phone' => '081289123456',

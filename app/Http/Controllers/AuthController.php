@@ -44,7 +44,12 @@ class AuthController extends Controller
             /** @var User $user */
             $user = Auth::user();
 
-            if ($user->isOwnerOrAdmin()) {
+            if ($user->isAdmin()) {
+                return redirect()->intended(route('admin.dashboard'))
+                    ->with('success', "Selamat datang kembali, Administrator {$user->name}!");
+            }
+
+            if ($user->isOwner()) {
                 return redirect()->intended(route('owner.dashboard'))
                     ->with('success', "Selamat datang kembali, {$user->name}!");
             }
@@ -79,7 +84,6 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['required', 'string', 'max:20'],
-            'role' => ['required', 'string', 'in:penyewa,pemilik'],
             'password' => ['required', 'confirmed', Password::min(6)],
         ]);
 
@@ -87,7 +91,7 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'role' => $validated['role'],
+            'role' => 'penyewa', // Semua registrasi publik otomatis sebagai penyewa
             'password' => Hash::make($validated['password']),
             'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($validated['name']).'&background=0D9488&color=fff',
         ]);
@@ -95,13 +99,8 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        if ($user->isOwnerOrAdmin()) {
-            return redirect()->route('owner.dashboard')
-                ->with('success', 'Akun Pemilik berhasil dibuat! Selamat datang di dashboard Anda.');
-        }
-
         return redirect()->route('home')
-            ->with('success', 'Pendaftaran berhasil! Selamat datang di Booking Kontrakan.');
+            ->with('success', 'Pendaftaran berhasil! Akun Anda terdaftar sebagai Penyewa.');
     }
 
     /**
@@ -110,7 +109,8 @@ class AuthController extends Controller
     public function quickLogin(string $role): RedirectResponse
     {
         $email = match ($role) {
-            'pemilik', 'admin' => 'admin@kontrakan.test',
+            'admin' => 'admin@kontrakan.test',
+            'pemilik' => 'pemilik@kontrakan.test',
             default => 'budi@gmail.com',
         };
 
@@ -120,9 +120,14 @@ class AuthController extends Controller
             Auth::login($user);
             request()->session()->regenerate();
 
-            if ($user->isOwnerOrAdmin()) {
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard')
+                    ->with('success', "Login cepat berhasil sebagai {$user->name} (Administrator).");
+            }
+
+            if ($user->isOwner()) {
                 return redirect()->route('owner.dashboard')
-                    ->with('success', "Login cepat berhasil sebagai {$user->name} (Pemilik/Admin).");
+                    ->with('success', "Login cepat berhasil sebagai {$user->name} (Pemilik).");
             }
 
             return redirect()->route('home')

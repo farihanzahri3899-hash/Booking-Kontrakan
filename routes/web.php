@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
@@ -68,4 +69,12 @@ Route::middleware(['auth', 'owner'])->prefix('pemilik')->name('owner.')->group(f
     Route::post('/notifikasi/{id}/baca', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::delete('/notifikasi/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+});
+
+// Admin Exclusive Protected Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/users/{user}/grant-owner', [AdminDashboardController::class, 'grantOwner'])->name('users.grant-owner');
+    Route::post('/users/{user}/revoke-owner', [AdminDashboardController::class, 'revokeOwner'])->name('users.revoke-owner');
+    Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
 });

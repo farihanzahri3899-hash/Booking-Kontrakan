@@ -3,7 +3,7 @@
 @section('title', 'Daftar Akun Baru')
 
 @section('content')
-<div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" x-data="{ role: 'penyewa' }">
+<div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-6">
         <!-- Header -->
         <div class="text-center">
@@ -13,7 +13,7 @@
                 </svg>
             </div>
             <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Daftar Akun KontrakanID</h2>
-            <p class="text-xs text-slate-500 mt-1">Dapatkan kemudahan mencari atau mengelola sewa kontrakan</p>
+            <p class="text-xs text-slate-500 mt-1">Daftar sekarang untuk mulai mencari dan menyewa kontrakan impian</p>
         </div>
 
         <!-- Register Form -->
@@ -21,18 +21,12 @@
             <form action="{{ route('register') }}" method="POST" class="space-y-4">
                 @csrf
 
-                <!-- Role Selection Toggle -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tipe Akun</label>
-                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
-                        <button type="button" @click="role = 'penyewa'" :class="role === 'penyewa' ? 'bg-white shadow text-brand-700 font-bold' : 'text-slate-600 font-semibold'" class="py-2 text-xs rounded-lg transition-all text-center">
-                            Saya Penyewa
-                        </button>
-                        <button type="button" @click="role = 'pemilik'" :class="role === 'pemilik' ? 'bg-white shadow text-brand-700 font-bold' : 'text-slate-600 font-semibold'" class="py-2 text-xs rounded-lg transition-all text-center">
-                            Saya Pemilik
-                        </button>
-                    </div>
-                    <input type="hidden" name="role" :value="role">
+                <!-- Info Notice -->
+                <div class="p-3 rounded-2xl bg-brand-50 border border-brand-100 flex items-start gap-2.5">
+                    <svg class="w-4 h-4 text-brand-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <p class="text-xs text-brand-800 leading-relaxed">
+                        Pendaftaran akun publik otomatis sebagai <span class="font-bold">Penyewa</span>. Izin akun Pemilik Kontrakan diverifikasi dan diberikan khusus oleh Administrator.
+                    </p>
                 </div>
 
                 <div>

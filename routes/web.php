@@ -116,4 +116,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/kyc', [AdminDashboardController::class, 'kycIndex'])->name('kyc.index');
     Route::post('/kyc/{user}/approve', [AdminDashboardController::class, 'approveKyc'])->name('kyc.approve');
     Route::post('/kyc/{user}/reject', [AdminDashboardController::class, 'rejectKyc'])->name('kyc.reject');
+
+    // Admin Sync Notifications
+    Route::post('/sync-notifications', [AdminDashboardController::class, 'syncNotifications'])->name('sync-notifications');
 });

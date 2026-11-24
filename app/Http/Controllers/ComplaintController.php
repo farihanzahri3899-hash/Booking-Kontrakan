@@ -80,6 +80,13 @@ class ComplaintController extends Controller
             'status' => 'pending',
         ]);
 
+        // Kirim notifikasi laporan kendala ke pemilik kontrakan
+        $complaint->load(['property.user', 'user']);
+        $owner = $complaint->property?->user;
+        if ($owner) {
+            $owner->notify(new \App\Notifications\NewComplaintNotification($complaint));
+        }
+
         return redirect()->route('complaints.show', $complaint)
             ->with('success', 'Laporan kendala berhasil dikirim ke pemilik kontrakan!');
     }

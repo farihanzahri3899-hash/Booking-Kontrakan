@@ -129,5 +129,9 @@ class BookingSeeder extends Seeder
                 'comment' => 'Petakannya rapi, cat bersih, dan tidak pengap sama sekali. Sangat pas untuk pekerja kantoran di area Cilandak.',
             ]
         );
+
+        // Hubungkan dan buat notifikasi booking lama ke pemilik kontrakan
+        $syncService = new \App\Services\NotificationSyncService();
+        $syncService->syncAllNotificationsToOwners();
     }
 }

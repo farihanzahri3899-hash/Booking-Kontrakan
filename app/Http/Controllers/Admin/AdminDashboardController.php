@@ -108,7 +108,7 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Grant property owner permission to a tenant.
+     * Grant property owner permission to a tenant and link existing property notifications.
      */
     public function grantOwner(User $user): RedirectResponse
     {
@@ -122,7 +122,27 @@ class AdminDashboardController extends Controller
 
         $user->update(['role' => 'pemilik']);
 
-        return back()->with('success', "Izin Pemilik Kontrakan berhasil diberikan kepada {$user->name} ({$user->email}). Akun kini dapat mendaftarkan dan mengelola unit kontrakan.");
+        // Kirim notifikasi selamat datang izin pemilik
+        $user->notify(new \App\Notifications\OwnerPermissionGrantedNotification());
+
+        // Sinkronkan notifikasi pesanan dan laporan terkait properti yang dikelola ke pemilik ini
+        $syncService = new \App\Services\NotificationSyncService();
+        $syncService->syncAllNotificationsToOwners($user);
+
+        return back()->with('success', "Izin Pemilik Kontrakan berhasil diberikan kepada {$user->name} ({$user->email}). Akun kini dapat mengelola unit kontrakan dan menerima notifikasi pesanan.");
+    }
+
+    /**
+     * Sinkronkan seluruh notifikasi lama ke pemilik properti yang baru.
+     */
+    public function syncNotifications(): RedirectResponse
+    {
+        $syncService = new \App\Services\NotificationSyncService();
+        $result = $syncService->syncAllNotificationsToOwners();
+
+        $total = $result['synced_bookings'] + $result['synced_complaints'] + $result['relinked_notifications'];
+
+        return back()->with('success', "Berhasil menyinkronkan {$total} notifikasi ke pemilik kontrakan! ({$result['synced_bookings']} booking, {$result['synced_complaints']} komplain, {$result['relinked_notifications']} dialihkan ke pemilik baru).");
     }
 
     /**

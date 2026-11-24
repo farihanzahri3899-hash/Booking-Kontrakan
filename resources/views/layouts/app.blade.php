@@ -141,15 +141,6 @@
                                         </span>
                                     @endif
                                 </button>
-                                    @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
-                                        <span class="absolute top-1 right-1 flex h-4 w-4">
-                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                            <span class="relative inline-flex items-center justify-center rounded-full h-4 w-4 bg-rose-600 text-[10px] font-bold text-white leading-none">
-                                                {{ $navbarUnreadNotificationsCount > 9 ? '9+' : $navbarUnreadNotificationsCount }}
-                                            </span>
-                                        </span>
-                                    @endif
-                                </button>
 
                                 <!-- Dropdown Panel -->
                                 <div x-show="notifOpen" x-cloak 

@@ -25,6 +25,13 @@ class User extends Authenticatable
         'role',
         'phone',
         'avatar',
+        'kyc_status',
+        'kyc_id_type',
+        'kyc_id_number',
+        'kyc_document_path',
+        'kyc_selfie_path',
+        'kyc_rejection_reason',
+        'kyc_verified_at',
     ];
 
     /**
@@ -47,6 +54,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'kyc_verified_at' => 'datetime',
         ];
     }
 
@@ -72,6 +80,38 @@ class User extends Authenticatable
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Wishlist favorites.
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Complaints submitted by this user.
+     */
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    /**
+     * Conversations as tenant.
+     */
+    public function conversationsAsTenant(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'tenant_id');
+    }
+
+    /**
+     * Conversations as owner.
+     */
+    public function conversationsAsOwner(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'owner_id');
     }
 
     /**
@@ -104,5 +144,38 @@ class User extends Authenticatable
     public function isTenant(): bool
     {
         return $this->role === 'penyewa';
+    }
+
+    /**
+     * Check if user is verified with KYC blue checkmark badge.
+     */
+    public function isVerified(): bool
+    {
+        return $this->kyc_status === 'verified';
+    }
+
+    public function isKycPending(): bool
+    {
+        return $this->kyc_status === 'pending';
+    }
+
+    public function getKycStatusLabelAttribute(): string
+    {
+        return match ($this->kyc_status) {
+            'verified' => 'Terverifikasi (Centang Biru)',
+            'pending' => 'Menunggu Verifikasi Admin',
+            'rejected' => 'Verifikasi Ditolak',
+            default => 'Belum Terverifikasi',
+        };
+    }
+
+    public function getKycStatusBadgeClassAttribute(): string
+    {
+        return match ($this->kyc_status) {
+            'verified' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+            'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
+            default => 'bg-slate-100 text-slate-600 border-slate-200',
+        };
     }
 }

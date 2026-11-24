@@ -49,4 +49,31 @@ class ReviewController extends Controller
 
         return back()->with('success', 'Terima kasih atas ulasan dan rating yang Anda berikan!');
     }
+
+    /**
+     * Owner responds to a review for their property.
+     */
+    public function reply(Request $request, Review $review): RedirectResponse
+    {
+        $user = Auth::user();
+        $property = $review->property;
+
+        if ($property->user_id !== $user->id && ! $user->isAdmin()) {
+            abort(403, 'Hanya pemilik properti atau admin yang dapat membalas ulasan ini.');
+        }
+
+        $validated = $request->validate([
+            'owner_reply' => ['required', 'string', 'min:3', 'max:1500'],
+        ], [
+            'owner_reply.required' => 'Balasan ulasan tidak boleh kosong.',
+            'owner_reply.min' => 'Balasan ulasan minimal 3 karakter.',
+        ]);
+
+        $review->update([
+            'owner_reply' => trim($validated['owner_reply']),
+            'owner_replied_at' => now(),
+        ]);
+
+        return back()->with('success', 'Balasan ulasan berhasil dikirim!');
+    }
 }

@@ -84,15 +84,39 @@
                 </div>
 
                 <!-- Right Menu: Auth / Actions -->
-                <div class="hidden md:flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 lg:gap-3">
                     @auth
+                        <!-- Wishlist / Favorit Button -->
+                        <a href="{{ route('favorites.index') }}" class="relative p-2 text-slate-600 hover:text-rose-600 hover:bg-slate-100 rounded-xl transition-colors" title="Daftar Favorit Saya">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                            @if(!empty($navbarFavoritesCount) && $navbarFavoritesCount > 0)
+                                <span class="absolute top-1 right-1 flex items-center justify-center rounded-full h-4 w-4 bg-rose-500 text-[10px] font-bold text-white leading-none">
+                                    {{ $navbarFavoritesCount > 9 ? '9+' : $navbarFavoritesCount }}
+                                </span>
+                            @endif
+                        </a>
+
+                        <!-- In-App Chat Button -->
+                        <a href="{{ route('chat.index') }}" class="relative p-2 text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-xl transition-colors" title="Pesan / Chat Langsung">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            @if(!empty($navbarUnreadMessagesCount) && $navbarUnreadMessagesCount > 0)
+                                <span class="absolute top-1 right-1 flex items-center justify-center rounded-full h-4 w-4 bg-brand-600 text-[10px] font-bold text-white leading-none">
+                                    {{ $navbarUnreadMessagesCount > 9 ? '9+' : $navbarUnreadMessagesCount }}
+                                </span>
+                            @endif
+                        </a>
+
                         @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200">
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200">
                                 <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                 <span>Panel Admin</span>
                             </a>
                         @elseif(auth()->user()->isOwner())
-                            <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors border border-brand-200">
+                            <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors border border-brand-200">
                                 <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                                 </svg>
@@ -108,6 +132,15 @@
                                     <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                     </svg>
+                                    @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
+                                        <span class="absolute top-1 right-1 flex h-4 w-4">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                            <span class="relative inline-flex items-center justify-center rounded-full h-4 w-4 bg-rose-600 text-[10px] font-bold text-white leading-none">
+                                                {{ $navbarUnreadNotificationsCount > 9 ? '9+' : $navbarUnreadNotificationsCount }}
+                                            </span>
+                                        </span>
+                                    @endif
+                                </button>
                                     @if(!empty($navbarUnreadNotificationsCount) && $navbarUnreadNotificationsCount > 0)
                                         <span class="absolute top-1 right-1 flex h-4 w-4">
                                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
@@ -214,9 +247,18 @@
 
                         <!-- User Profile Dropdown -->
                         <div class="relative ml-2" x-data="{ open: false }" @click.outside="open = false">
-                            <button @click="open = !open" type="button" class="flex items-center gap-3 p-1.5 pl-3 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors">
+                            <button @click="open = !open" type="button" class="flex items-center gap-2.5 p-1.5 pl-3 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors">
                                 <div class="text-left hidden lg:block">
-                                    <p class="text-xs font-semibold text-slate-900 leading-tight">{{ auth()->user()->name }}</p>
+                                    <div class="flex items-center gap-1">
+                                        <p class="text-xs font-semibold text-slate-900 leading-tight">{{ auth()->user()->name }}</p>
+                                        @if(auth()->user()->isVerified())
+                                            <span class="text-sky-500" title="Akun Terverifikasi (KYC)">
+                                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                </svg>
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-[10px] font-medium text-slate-600 capitalize">{{ auth()->user()->role }}</p>
                                 </div>
                                 <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=059669&color=fff' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200">
@@ -225,9 +267,17 @@
                                 </svg>
                             </button>
 
-                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-xl ring-1 ring-black/5 divide-y divide-slate-100 py-1 z-50">
+                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl ring-1 ring-black/5 divide-y divide-slate-100 py-1 z-50">
                                 <div class="px-4 py-3">
-                                    <p class="text-xs text-slate-600">Masuk sebagai</p>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <p class="text-xs text-slate-600">Masuk sebagai</p>
+                                        @if(auth()->user()->isVerified())
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200">
+                                                <svg class="w-3 h-3 text-sky-600 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                                Verified
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-sm font-bold text-slate-900 truncate">{{ auth()->user()->name }}</p>
                                     <p class="text-xs text-slate-600 truncate">{{ auth()->user()->email }}</p>
                                 </div>
@@ -237,6 +287,12 @@
                                         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 font-bold">
                                             <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                             Dashboard Admin
+                                        </a>
+                                        <a href="{{ route('admin.kyc.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                                <span>Verifikasi KYC Pengguna</span>
+                                            </div>
                                         </a>
                                     @endif
 
@@ -252,6 +308,17 @@
                                         <a href="{{ route('owner.bookings.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
                                             <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                             Permohonan Booking
+                                        </a>
+                                        <a href="{{ route('owner.complaints.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span>Laporan Kendala Penyewa</span>
+                                            </div>
+                                            @if(!empty($navbarPendingComplaintsCount) && $navbarPendingComplaintsCount > 0)
+                                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white leading-none">
+                                                    {{ $navbarPendingComplaintsCount }}
+                                                </span>
+                                            @endif
                                         </a>
                                         <a href="{{ route('owner.notifications.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
                                             <div class="flex items-center gap-2">
@@ -269,7 +336,51 @@
                                             <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                             Riwayat Booking Saya
                                         </a>
+                                        <a href="{{ route('favorites.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                                <span>Favorit Saya</span>
+                                            </div>
+                                            @if(!empty($navbarFavoritesCount) && $navbarFavoritesCount > 0)
+                                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    {{ $navbarFavoritesCount }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                        <a href="{{ route('complaints.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span>Laporan Kendala Saya</span>
+                                            </div>
+                                            @if(!empty($navbarPendingComplaintsCount) && $navbarPendingComplaintsCount > 0)
+                                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white leading-none">
+                                                    {{ $navbarPendingComplaintsCount }}
+                                                </span>
+                                            @endif
+                                        </a>
                                     @endif
+
+                                    <a href="{{ route('chat.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                            <span>Pesan & Chat</span>
+                                        </div>
+                                        @if(!empty($navbarUnreadMessagesCount) && $navbarUnreadMessagesCount > 0)
+                                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-600 text-white leading-none">
+                                                {{ $navbarUnreadMessagesCount }}
+                                            </span>
+                                        @endif
+                                    </a>
+
+                                    <a href="{{ route('kyc.index') }}" class="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                            <span>Verifikasi Identitas</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border {{ auth()->user()->kyc_status_badge_class }}">
+                                            {{ auth()->user()->isVerified() ? 'Verified' : (auth()->user()->isKycPending() ? 'Pending' : 'Unverified') }}
+                                        </span>
+                                    </a>
 
                                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600 font-medium">
                                         <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -338,6 +449,9 @@
                             <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-sm font-bold text-indigo-700 bg-indigo-50/70 hover:bg-indigo-100 rounded-lg">
                                 Dashboard Administrator
                             </a>
+                            <a href="{{ route('admin.kyc.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                                Verifikasi KYC Pengguna
+                            </a>
                         @endif
 
                         @if(auth()->user()->isOwnerOrAdmin())
@@ -349,6 +463,14 @@
                             </a>
                             <a href="{{ route('owner.bookings.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
                                 Permohonan Booking
+                            </a>
+                            <a href="{{ route('owner.complaints.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <span>Laporan Kendala Penyewa</span>
+                                @if(!empty($navbarPendingComplaintsCount) && $navbarPendingComplaintsCount > 0)
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-white">
+                                        {{ $navbarPendingComplaintsCount }}
+                                    </span>
+                                @endif
                             </a>
                             <a href="{{ route('owner.notifications.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <span>Pusat Notifikasi</span>
@@ -362,7 +484,34 @@
                             <a href="{{ route('bookings.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
                                 Pesanan Saya
                             </a>
+                            <a href="{{ route('favorites.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <span>Favorit Saya</span>
+                                @if(!empty($navbarFavoritesCount) && $navbarFavoritesCount > 0)
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500 text-white">
+                                        {{ $navbarFavoritesCount }}
+                                    </span>
+                                @endif
+                            </a>
+                            <a href="{{ route('complaints.index') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                                Laporan Kendala Saya
+                            </a>
                         @endif
+
+                        <a href="{{ route('chat.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                            <span>Pesan & Chat</span>
+                            @if(!empty($navbarUnreadMessagesCount) && $navbarUnreadMessagesCount > 0)
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-brand-600 text-white">
+                                    {{ $navbarUnreadMessagesCount }}
+                                </span>
+                            @endif
+                        </a>
+
+                        <a href="{{ route('kyc.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
+                            <span>Verifikasi Identitas</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded {{ auth()->user()->isVerified() ? 'text-sky-700 bg-sky-50' : 'text-slate-600 bg-slate-100' }}">
+                                {{ auth()->user()->isVerified() ? 'Verified' : 'Belum Verifikasi' }}
+                            </span>
+                        </a>
 
                         <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
                             Pengaturan Profil

@@ -48,10 +48,10 @@
                             Pilih Kota
                         </label>
                         <select name="city" id="city" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all text-slate-700">
-                            <option value="">Semua Kota</option>
-                            @foreach($cities as $cityItem)
-                                <option value="{{ $cityItem->city }}" {{ request('city') === $cityItem->city ? 'selected' : '' }}>
-                                    {{ $cityItem->city }} ({{ $cityItem->total }})
+                            <option value="">Semua Kota (Seluruh Wilayah)</option>
+                            @foreach($allCities as $cityOption)
+                                <option value="{{ $cityOption }}" {{ request('city') === $cityOption ? 'selected' : '' }}>
+                                    {{ $cityOption }}
                                 </option>
                             @endforeach
                         </select>
@@ -113,6 +113,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Personalized Tenant Quick Overview -->
+    @if($tenantOverview)
+        <section class="bg-brand-50/70 border-b border-brand-100 py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl p-5 border border-brand-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ $tenantOverview['user']->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($tenantOverview['user']->name) . '&background=059669&color=fff' }}" alt="{{ $tenantOverview['user']->name }}" class="w-12 h-12 rounded-full border-2 border-brand-500 object-cover">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base font-bold text-slate-900">Halo, {{ $tenantOverview['user']->name }} 👋</h3>
+                                @if($tenantOverview['user']->isVerified())
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                        <svg class="w-3 h-3 fill-current text-blue-600" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        Penyewa Terverifikasi
+                                    </span>
+                                @else
+                                    <a href="{{ route('kyc.index') }}" class="text-[11px] font-semibold text-amber-600 hover:text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                        ⚡ Dapatkan Centang Biru (KYC)
+                                    </a>
+                                @endif
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">Akses cepat ke wishlist, chat pemilik, dan laporan kendala kontrakan Anda.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                        <a href="{{ route('favorites.index') }}" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-rose-300 text-xs font-bold text-slate-700 hover:text-rose-600 shadow-sm transition-all">
+                            <svg class="w-4 h-4 fill-rose-500 text-rose-500" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            <span>Wishlist ({{ $tenantOverview['wishlist_count'] }})</span>
+                        </a>
+
+                        <a href="{{ route('complaints.index') }}" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-amber-300 text-xs font-bold text-slate-700 hover:text-amber-600 shadow-sm transition-all">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span>Laporan ({{ $tenantOverview['complaints_count'] }})</span>
+                        </a>
+
+                        <a href="{{ route('chat.index') }}" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white shadow-sm transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <span>Chat</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 
     <!-- Category Section -->
     <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -213,6 +259,19 @@
                                 @endif
                             </div>
 
+                            <!-- Favorite Heart Toggle -->
+                            @auth
+                                <div class="absolute top-3 right-3 z-10">
+                                    <form action="{{ route('favorites.toggle', $property) }}" method="POST">
+                                        @csrf
+                                        @php $isFav = $property->isFavoritedBy(auth()->user()); @endphp
+                                        <button type="submit" class="p-2 rounded-full bg-white/90 backdrop-blur hover:bg-white text-slate-700 shadow-md transition-transform hover:scale-110" title="{{ $isFav ? 'Hapus dari Favorit' : 'Simpan ke Favorit' }}">
+                                            <svg class="w-4 h-4 {{ $isFav ? 'fill-rose-500 text-rose-500' : 'fill-none text-slate-400 hover:text-rose-500' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            @endauth
+
                             <div class="absolute bottom-3 right-3">
                                 @if($property->is_available)
                                     <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/90 backdrop-blur text-white shadow-sm">
@@ -231,10 +290,13 @@
                             <div>
                                 <!-- Location & Rating -->
                                 <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
-                                    <span class="flex items-center gap-1 text-slate-600 font-medium">
-                                        <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                        {{ $property->district ? $property->district . ', ' : '' }}{{ $property->city }}
-                                    </span>
+                                    <div class="flex items-center gap-1.5 text-slate-600 font-medium">
+                                        <svg class="w-3.5 h-3.5 text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        <span>{{ $property->district ? $property->district . ', ' : '' }}{{ $property->city }}</span>
+                                        @if($property->user && $property->user->isVerified())
+                                            <svg class="w-3.5 h-3.5 text-blue-600 fill-current shrink-0" viewBox="0 0 20 20" title="Pemilik Terverifikasi (KTP/KYC Valid)"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        @endif
+                                    </div>
                                     <div class="flex items-center gap-1 text-amber-500 font-bold">
                                         <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                         <span>{{ $property->average_rating }}</span>
@@ -335,6 +397,75 @@
         </div>
     </section>
 
+    <!-- New Tenant & Communication Highlights Section -->
+    <section class="py-16 bg-gradient-to-b from-slate-50 to-white border-t border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200/60">Fitur Baru & Interaktif</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Komunikasi Lancar, Kenyamanan Maksimal</h2>
+                <p class="text-sm text-slate-500 mt-2">Semua kebutuhan sewa menyewa kini terintegrasi langsung dalam aplikasi tanpa perlu repot.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1: Laporan Masalah -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Laporan Kerusakan & Komplain</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        AC rusak, kran bocor, atau atap merembes? Lapor langsung lengkap dengan foto, pantau status perbaikan real-time hingga selesai.
+                    </p>
+                    <a href="{{ route('complaints.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 mt-4 hover:underline">
+                        <span>Pusat Laporan</span> &rarr;
+                    </a>
+                </div>
+
+                <!-- Feature 2: In-App Chat -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Chat Langsung Real-Time</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        Tanya jawab seputar aturan jam malam, parkir, dan lingkungan kontrakan langsung di aplikasi tanpa membagikan kontak pribadi.
+                    </p>
+                    <a href="{{ route('chat.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-brand-600 mt-4 hover:underline">
+                        <span>Buka Obrolan</span> &rarr;
+                    </a>
+                </div>
+
+                <!-- Feature 3: Balas Ulasan -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Balasan Pemilik Properti</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        Transparansi ulasan dua arah. Pemilik kontrakan dapat menanggapi saran dan ulasan penyewa untuk meningkatkan rasa percaya calon penyewa.
+                    </p>
+                    <a href="{{ route('properties.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-amber-600 mt-4 hover:underline">
+                        <span>Lihat Ulasan</span> &rarr;
+                    </a>
+                </div>
+
+                <!-- Feature 4: Wishlist & Komparasi -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Wishlist & Komparasi Unit</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        Tandai beberapa kontrakan favorit dengan tombol hati, lalu bandingkan harga sewa, ukuran kamar, dan fasilitas dalam satu tabel praktis.
+                    </p>
+                    <a href="{{ route('favorites.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-purple-600 mt-4 hover:underline">
+                        <span>Wishlist & Komparasi</span> &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Testimonials Section -->
     <section class="py-16 bg-slate-900 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -387,8 +518,8 @@
             </div>
 
             <div class="shrink-0 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <a href="{{ route('register') }}" class="px-6 py-3.5 bg-white text-brand-800 hover:bg-slate-100 font-bold rounded-xl text-center shadow-lg transition-all hover:scale-105">
-                    Daftar Sebagai Pemilik
+                <a href="{{ route('properties.index') }}" class="px-6 py-3.5 bg-white text-brand-800 hover:bg-slate-100 font-bold rounded-xl text-center shadow-lg transition-all hover:scale-105">
+                    Mulai Jelajah Kontrakan
                 </a>
                 <a href="{{ route('quick-login', 'pemilik') }}" class="px-6 py-3.5 bg-brand-900/40 hover:bg-brand-900/60 border border-white/20 text-white font-bold rounded-xl text-center backdrop-blur transition-all">
                     Demo Panel Pemilik

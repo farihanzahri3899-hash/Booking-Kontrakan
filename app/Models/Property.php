@@ -88,6 +88,42 @@ class Property extends Model
     }
 
     /**
+     * Favorites for this property.
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Complaints for this property.
+     */
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    /**
+     * Conversations for this property.
+     */
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    /**
+     * Check if this property is favorited by a user.
+     */
+    public function isFavoritedBy(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
+    /**
      * Average rating accessor.
      */
     public function getAverageRatingAttribute(): float

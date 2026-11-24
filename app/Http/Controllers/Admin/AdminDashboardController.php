@@ -29,6 +29,7 @@ class AdminDashboardController extends Controller
             'total_admins' => User::where('role', 'admin')->count(),
             'total_properties' => Property::count(),
             'total_bookings' => Booking::count(),
+            'pending_kyc' => User::where('kyc_status', 'pending')->count(),
         ];
 
         // Query users with search & filter
@@ -49,6 +50,61 @@ class AdminDashboardController extends Controller
         $users = $query->paginate(12)->withQueryString();
 
         return view('admin.dashboard', compact('stats', 'users', 'roleFilter', 'search'));
+    }
+
+    /**
+     * Display KYC verification requests list.
+     */
+    public function kycIndex(Request $request): View
+    {
+        $status = $request->query('status', 'pending');
+
+        $users = User::when($status !== 'all', fn ($q) => $q->where('kyc_status', $status))
+            ->whereNotNull('kyc_id_type')
+            ->latest('updated_at')
+            ->paginate(12);
+
+        $counts = [
+            'pending' => User::where('kyc_status', 'pending')->count(),
+            'verified' => User::where('kyc_status', 'verified')->count(),
+            'rejected' => User::where('kyc_status', 'rejected')->count(),
+            'all' => User::whereNotNull('kyc_id_type')->count(),
+        ];
+
+        return view('admin.kyc', compact('users', 'counts', 'status'));
+    }
+
+    /**
+     * Approve KYC and grant blue checkmark verified badge.
+     */
+    public function approveKyc(User $user): RedirectResponse
+    {
+        $user->update([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+            'kyc_rejection_reason' => null,
+        ]);
+
+        return back()->with('success', "Identitas {$user->name} ({$user->email}) berhasil diverifikasi! Centang biru telah aktif pada akun ini.");
+    }
+
+    /**
+     * Reject KYC request with reason.
+     */
+    public function rejectKyc(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ], [
+            'rejection_reason.required' => 'Alasan penolakan verifikasi wajib diisi agar pengguna dapat memperbaikinya.',
+        ]);
+
+        $user->update([
+            'kyc_status' => 'rejected',
+            'kyc_rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        return back()->with('info', "Verifikasi untuk {$user->name} ditolak dengan alasan: {$validated['rejection_reason']}");
     }
 
     /**

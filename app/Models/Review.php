@@ -16,6 +16,8 @@ class Review extends Model
         'booking_id',
         'rating',
         'comment',
+        'owner_reply',
+        'owner_replied_at',
     ];
 
     /**
@@ -27,7 +29,16 @@ class Review extends Model
     {
         return [
             'rating' => 'integer',
+            'owner_replied_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Check if review has an owner reply.
+     */
+    public function hasOwnerReply(): bool
+    {
+        return ! empty($this->owner_reply);
     }
 
     /**

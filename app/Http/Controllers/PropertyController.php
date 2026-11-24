@@ -16,16 +16,31 @@ class PropertyController extends Controller
         $filters = $request->only(['q', 'city', 'type', 'min_price', 'max_price', 'bedrooms', 'sort']);
 
         $properties = Property::query()
-            ->with(['reviews'])
+            ->with(['reviews', 'user'])
             ->filter($filters)
             ->paginate(9)
             ->withQueryString();
 
-        $cities = Property::query()
+        $dbCities = Property::query()
             ->distinct()
             ->pluck('city')
+            ->filter()
             ->sort()
             ->values();
+
+        $popularCities = collect([
+            'Kota Jambi',
+            'Mendalo (UNJA)',
+            'Telanaipura',
+            'Muaro Jambi',
+            'Palembang',
+            'Padang',
+            'Pekanbaru',
+            'Bandung',
+            'Yogyakarta',
+        ]);
+
+        $cities = $dbCities->merge($popularCities)->unique()->values();
 
         $types = [
             'rumah' => 'Rumah Kontrakan',
@@ -51,15 +66,16 @@ class PropertyController extends Controller
             ->where('id', '!=', $property->id)
             ->where('city', $property->city)
             ->available()
-            ->with(['reviews'])
+            ->with(['reviews', 'user'])
             ->take(3)
             ->get();
 
         if ($similarProperties->isEmpty()) {
             $similarProperties = Property::query()
                 ->where('id', '!=', $property->id)
+                ->where('property_type', $property->property_type)
                 ->available()
-                ->with(['reviews'])
+                ->with(['reviews', 'user'])
                 ->take(3)
                 ->get();
         }

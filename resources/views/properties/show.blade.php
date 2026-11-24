@@ -74,7 +74,37 @@
             </div>
         </div>
 
-        <div class="shrink-0 flex items-center gap-2">
+        <div class="shrink-0 flex flex-wrap items-center gap-2">
+            <!-- Favorite Wishlist Button -->
+            @auth
+                <form action="{{ route('favorites.toggle', $property) }}" method="POST" class="inline">
+                    @csrf
+                    @php $isFav = $property->isFavoritedBy(auth()->user()); @endphp
+                    <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all shadow-sm {{ $isFav ? 'bg-rose-50 border-rose-300 text-rose-600 hover:bg-rose-100' : 'bg-white border-slate-200 text-slate-700 hover:border-rose-300 hover:text-rose-600' }}" title="{{ $isFav ? 'Hapus dari Favorit' : 'Simpan ke Favorit' }}">
+                        <svg class="w-4 h-4 {{ $isFav ? 'fill-rose-500 text-rose-500' : 'fill-none text-slate-400' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        <span>{{ $isFav ? 'Tersimpan' : 'Favorit' }}</span>
+                    </button>
+                </form>
+            @endauth
+
+            <!-- In-App Chat Button -->
+            @auth
+                @if(auth()->id() !== $property->user_id)
+                    <form action="{{ route('chat.start', $property) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <span>Chat Pemilik</span>
+                        </button>
+                    </form>
+                @endif
+            @else
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <span>Chat Pemilik</span>
+                </a>
+            @endauth
+
             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $property->user->phone ?? '081289123456') }}?text={{ urlencode('Halo, saya tertarik dengan kontrakan: ' . $property->title . ' (' . url()->current() . ')') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                 <span>Chat Pemilik</span>
@@ -188,18 +218,37 @@
                 <div class="flex items-center gap-4 text-center sm:text-left">
                     <img src="{{ $property->user->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($property->user->name) . '&background=059669&color=fff' }}" alt="{{ $property->user->name }}" class="w-16 h-16 rounded-full object-cover border-2 border-brand-500 shadow-sm">
                     <div>
-                        <div class="flex items-center justify-center sm:justify-start gap-2">
+                        <div class="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
                             <h3 class="text-base font-bold text-slate-900">{{ $property->user->name }}</h3>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200">
-                                Pemilik Terverifikasi
-                            </span>
+                            @if($property->user->isVerified())
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200" title="Identitas Pemilik Terverifikasi (KTP/KYC Valid)">
+                                    <svg class="w-3 h-3 text-blue-600 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    Terverifikasi
+                                </span>
+                            @else
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">
+                                    Pemilik Kontrakan
+                                </span>
+                            @endif
                         </div>
                         <p class="text-xs text-slate-500 mt-1">Mengelola unit kontrakan di {{ $property->city }}</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Respons cepat &bull; Ramah &bull; Terpercaya</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Respons cepat &bull; Terverifikasi aman &bull; Tanpa Calo</p>
                     </div>
                 </div>
 
-                <div class="shrink-0 flex items-center gap-3">
+                <div class="shrink-0 flex flex-wrap items-center gap-2">
+                    @auth
+                        @if(auth()->id() !== $property->user_id)
+                            <form action="{{ route('chat.start', $property) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                    <span>Chat In-App</span>
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
+
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $property->user->phone ?? '081289123456') }}?text={{ urlencode('Halo Bapak/Ibu ' . $property->user->name . ', saya ingin bertanya mengenai unit kontrakan: ' . $property->title) }}" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:scale-105">
                         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                         <span>WhatsApp Pemilik</span>
@@ -222,12 +271,17 @@
                 <!-- Review list -->
                 <div class="divide-y divide-slate-100 mt-6">
                     @forelse($property->reviews as $review)
-                        <div class="py-5 first:pt-0 last:pb-0">
+                        <div class="py-5 first:pt-0 last:pb-0" x-data="{ replyOpen: false }">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex items-center gap-3">
                                     <img src="{{ $review->user->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->user->name) . '&background=059669&color=fff' }}" alt="{{ $review->user->name }}" class="w-9 h-9 rounded-full object-cover border border-slate-200">
                                     <div>
-                                        <p class="text-sm font-bold text-slate-900">{{ $review->user->name }}</p>
+                                        <div class="flex items-center gap-1.5">
+                                            <p class="text-sm font-bold text-slate-900">{{ $review->user->name }}</p>
+                                            @if($review->user->isVerified())
+                                                <svg class="w-3.5 h-3.5 text-blue-600 fill-current" viewBox="0 0 20 20" title="Penyewa Terverifikasi"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            @endif
+                                        </div>
                                         <p class="text-[10px] text-slate-400">{{ $review->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
@@ -240,6 +294,46 @@
                             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed pl-12">
                                 {{ $review->comment }}
                             </p>
+
+                            <!-- Balasan Pemilik Kontrakan -->
+                            @if($review->hasOwnerReply())
+                                <div class="mt-3 ml-12 p-3.5 rounded-xl bg-brand-50/60 border-l-4 border-brand-500 border-y border-r border-brand-100">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-brand-900">Tanggapan dari Pemilik Kontrakan</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-brand-600 text-white">Pemilik</span>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400">{{ $review->owner_replied_at ? $review->owner_replied_at->diffForHumans() : '' }}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-700 leading-relaxed">
+                                        {{ $review->owner_reply }}
+                                    </p>
+                                </div>
+                            @endif
+
+                            <!-- Owner quick reply button & inline form -->
+                            @auth
+                                @if(auth()->id() === $property->user_id || auth()->user()->isAdmin())
+                                    <div class="mt-3 ml-12">
+                                        <button type="button" @click="replyOpen = !replyOpen" class="inline-flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-700">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                            <span x-text="replyOpen ? 'Tutup Form Balasan' : '{{ $review->hasOwnerReply() ? 'Ubah Balasan Pemilik' : 'Balas Ulasan Ini' }}'"></span>
+                                        </button>
+
+                                        <div x-show="replyOpen" x-cloak class="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                            <form action="{{ route('owner.reviews.reply', $review) }}" method="POST" class="space-y-2">
+                                                @csrf
+                                                <label class="block text-xs font-bold text-slate-700">Tanggapan Resmi Pemilik:</label>
+                                                <textarea name="owner_reply" rows="2" required placeholder="Tuliskan terima kasih atau tanggapan ramah kepada penyewa..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none">{{ $review->owner_reply }}</textarea>
+                                                <div class="flex items-center justify-end gap-2">
+                                                    <button type="button" @click="replyOpen = false" class="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-200 rounded-lg">Batal</button>
+                                                    <button type="submit" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-lg shadow-sm">Simpan Balasan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endauth
                         </div>
                     @empty
                         <p class="text-xs text-slate-400 py-4 text-center">Belum ada ulasan untuk kontrakan ini. Jadilah penyewa pertama yang memberikan ulasan!</p>
